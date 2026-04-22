@@ -1,3 +1,11 @@
+logging:
+  level:
+    root: INFO
+    com.example.rgpd: INFO
+
+  file:
+    name: logs/rgpd-app.log
+
 spring:
   jpa:
     defer-datasource-initialization: true
