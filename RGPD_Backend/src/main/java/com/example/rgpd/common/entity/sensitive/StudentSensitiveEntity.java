@@ -2,11 +2,17 @@ package com.example.rgpd.common.entity.sensitive;
 
 import com.example.rgpd.common.entity.identity.StudentIdentityEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "student_sensitive")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentSensitiveEntity {
 
     @Id

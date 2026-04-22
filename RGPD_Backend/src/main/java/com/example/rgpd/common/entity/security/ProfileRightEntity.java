@@ -1,12 +1,18 @@
 package com.example.rgpd.common.entity.security;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 
 @Entity
 @Table(name = "profile_right")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProfileRightEntity {
 
     @Id

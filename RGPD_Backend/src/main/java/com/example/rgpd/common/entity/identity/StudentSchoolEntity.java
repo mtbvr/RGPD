@@ -1,11 +1,17 @@
 package com.example.rgpd.common.entity.identity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "student_school")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentSchoolEntity {
 
     @Id
