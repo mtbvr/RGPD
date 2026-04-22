@@ -8,7 +8,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.init.*;
 import org.springframework.orm.jpa.*;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -55,7 +57,19 @@ public class IdentityDbConfig {
         return new JpaTransactionManager(emf);
     }
 
-    private java.util.Map<String, Object> jpaProps() {
+    @Bean
+    public DataSourceInitializer identityDataSourceInitializer() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("data-identity.sql"));
+
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(identityDataSource());
+        initializer.setDatabasePopulator(populator);
+
+        return initializer;
+    }
+
+    private Map<String, Object> jpaProps() {
         return Map.of(
                 "hibernate.hbm2ddl.auto", "update",
                 "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect"

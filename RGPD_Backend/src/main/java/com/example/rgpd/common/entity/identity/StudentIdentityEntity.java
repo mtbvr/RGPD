@@ -29,7 +29,7 @@ public class StudentIdentityEntity {
     private String email;
 
     @Column(name = "phone_number")
-    private Number phoneNumber;
+    private String phoneNumber;
 
     @Column(name="created_at")
     private Instant createdAt;

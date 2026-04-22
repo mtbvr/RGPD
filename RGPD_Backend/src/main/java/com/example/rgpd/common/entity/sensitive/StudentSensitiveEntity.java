@@ -17,7 +17,6 @@ public class StudentSensitiveEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "allergy")
@@ -25,6 +24,12 @@ public class StudentSensitiveEntity {
 
     @Column(name = "student_id")
     private Long studentIdentityId;
+
+    @Column(name = "is_anonymized")
+    private Boolean isAnonymized = false;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
     @Column(name="created_at")
     private Instant createdAt;

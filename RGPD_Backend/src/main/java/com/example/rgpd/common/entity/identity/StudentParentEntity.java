@@ -26,7 +26,7 @@ public class StudentParentEntity {
     private String email;
 
     @Column(name = "phone_number", nullable = false)
-    private Number phoneNumber;
+    private String phoneNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")

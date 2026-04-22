@@ -8,7 +8,10 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.*;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -53,6 +56,18 @@ public class SecurityDbConfig {
     public PlatformTransactionManager securityTransactionManager(
             @Qualifier("securityEntityManager") EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
+    }
+
+    @Bean
+    public DataSourceInitializer securityDataSourceInitializer() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("data-security.sql"));
+
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(securityDataSource());
+        initializer.setDatabasePopulator(populator);
+
+        return initializer;
     }
 
     private java.util.Map<String, Object> jpaProps() {
