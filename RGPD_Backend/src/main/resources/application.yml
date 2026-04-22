@@ -1,0 +1,26 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    identity:
+      url: jdbc:postgresql://localhost:5432/identity_db
+      username: admin
+      password: admin123
+      driver-class-name: org.postgresql.Driver
+
+    security:
+      url: jdbc:postgresql://localhost:5435/security_db
+      username: admin
+      password: admin123
+      driver-class-name: org.postgresql.Driver
+
+    sensitive:
+      url: jdbc:postgresql://localhost:5434/sensitivity_db
+      username: admin
+      password: admin123
+      driver-class-name: org.postgresql.Driver

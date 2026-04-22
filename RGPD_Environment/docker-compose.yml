@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+
+  db_identity:
+    image: postgres:15
+    container_name: db_identity
+    restart: always
+    environment:
+      POSTGRES_DB: identity_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - identity_data:/var/lib/postgresql/data
+
+  db_sensitivity:
+    image: postgres:15
+    container_name: db_sensitivity
+    restart: always
+    environment:
+      POSTGRES_DB: sensitivity_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - sensitivity_data:/var/lib/postgresql/data
+
+  db_security:
+    image: postgres:15
+    container_name: db_security
+    restart: always
+    environment:
+      POSTGRES_DB: security_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5435:5432"
+    volumes:
+      - security_data:/var/lib/postgresql/data
+
+volumes:
+  identity_data:
+  scolaire_data:
+  sensitivity_data:
+  security_data:
