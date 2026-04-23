@@ -12,6 +12,7 @@ import com.example.rgpd.common.repository.security.ProfileUserRepository;
 import com.example.rgpd.common.repository.security.UserRepository;
 import com.example.rgpd.common.utils.JwtUtils;
 import com.example.rgpd.service.UserService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,14 +24,14 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final JwtUtils jwtUtil;
+    private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
     private final ProfileRepository profileRepository;
     private final ProfileUserRepository profileUserRepository;
     private final ProfileRightRepository profileRightRepository;
-    private final JwtUtils jwtUtils;
 
     @Override
+    @Transactional("securityTransactionManager")
     public AuthResponse signup(AuthRequest request) {
 
         if (userRepository.findByLogin(request.login()).isPresent()) {
@@ -46,24 +47,29 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        ProfileUserEntity right = new ProfileUserEntity();
-        right.setUser(user);
-        right.setProfile(defaultProfile);
-
-        profileUserRepository.save(right);
+        ProfileUserEntity profileUser = new ProfileUserEntity();
+        profileUser.setUser(user);
+        profileUser.setProfile(defaultProfile);
+        profileUserRepository.save(profileUser);
 
         List<RightsUser> rights = profileRightRepository
-                .findByProfileId(defaultProfile.getId())
+                .findByProfileIdWithRight(defaultProfile.getId())
                 .stream()
                 .map(link -> RightsUser.valueOf(link.getRight().getName()))
                 .toList();
 
-        String token = jwtUtils.generateToken(user.getLogin(), rights);
+        String token = jwtUtils.generateToken(
+                user.getLogin(),
+                rights,
+                defaultProfile.getName(),
+                user.getStudentIdentityId() // null pour STAFF
+        );
 
         return new AuthResponse(token);
     }
 
     @Override
+    @Transactional("securityTransactionManager")
     public AuthResponse login(AuthRequest request) {
 
         UserEntity user = userRepository.findByLogin(request.login())
@@ -73,19 +79,22 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        List<ProfileUserEntity> profilesUser =
-                profileUserRepository.findByUserId(user.getId());
+        List<ProfileUserEntity> profilesUser = profileUserRepository.findByUserId(user.getId());
 
         List<RightsUser> rights = profilesUser.stream()
-                .flatMap(pu ->
-                        profileRightRepository.findByProfileId(pu.getProfile().getId())
-                                .stream()
-                )
+                .flatMap(pu -> profileRightRepository.findByProfileIdWithRight(pu.getProfile().getId()).stream())
                 .map(link -> RightsUser.valueOf(link.getRight().getName()))
                 .distinct()
                 .toList();
 
-        String token = jwtUtil.generateToken(user.getLogin(), rights);
+        String profileName = profilesUser.isEmpty() ? "STAFF" : profilesUser.get(0).getProfile().getName();
+
+        String token = jwtUtils.generateToken(
+                user.getLogin(),
+                rights,
+                profileName,
+                user.getStudentIdentityId()
+        );
 
         return new AuthResponse(token);
     }

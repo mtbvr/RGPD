@@ -25,6 +25,9 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "student_identity_id")
+    private Long studentIdentityId;
+
     @Column(name="created_at")
     private Instant createdAt;
 

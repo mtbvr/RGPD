@@ -19,10 +19,12 @@ public class JwtUtils {
 
     private static final long EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
-    public String generateToken(String email, List<RightsUser> rights) {
+    public String generateToken(String email, List<RightsUser> rights, String profile, Long studentIdentityId) {
         return Jwts.builder()
                 .subject(email)
                 .claim("rights", rights.stream().map(Enum::name).toList())
+                .claim("profile", profile)
+                .claim("studentId", studentIdentityId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
                 .signWith(SECRET)
@@ -35,6 +37,12 @@ public class JwtUtils {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public Long extractStudentId(String token) {
+        Object val = extractAllClaims(token).get("studentId");
+        if (val == null) return null;
+        return ((Number) val).longValue();
     }
 
     public String extractEmail(String token) {

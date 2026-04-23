@@ -29,13 +29,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (token != null) {
 
+            Long studentId = jwtUtils.extractStudentId(token);
+
             var authorities = jwtUtils.extractRightsEnum(token).stream()
-                    .map(r -> new SimpleGrantedAuthority("RIGHT_" + r.name()))
+                    .map(r -> new SimpleGrantedAuthority(r.name()))
                     .toList();
 
             var auth = new UsernamePasswordAuthenticationToken(
                     jwtUtils.extractEmail(token),
-                    null,
+                    studentId,
                     authorities
             );
 
